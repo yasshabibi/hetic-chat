@@ -6,7 +6,7 @@ namespace Backend.Models.Users;
 public class UserSession
 {
     public User? User { get; set; }
-    public string SessionId { get; init; }
+    public string SessionId { get; }
     public bool Logged => User != null;
     public IPAddress? IpAddress { get; init; }
     public DateTime LastActivity { get; set; } = DateTime.UtcNow;

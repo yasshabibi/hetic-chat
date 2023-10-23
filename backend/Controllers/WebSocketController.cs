@@ -36,7 +36,8 @@ namespace Backend.Controllers
         {
             var webSocket = session.WebSocket;
             var buffer = new byte[1024 * 4];
-            while (true)
+            bool connected = true;
+            while (connected)
             {
                 var result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
 
@@ -49,6 +50,7 @@ namespace Backend.Controllers
                     case WebSocketMessageType.Binary:
                         break;
                     case WebSocketMessageType.Close:
+                        connected = false;
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();

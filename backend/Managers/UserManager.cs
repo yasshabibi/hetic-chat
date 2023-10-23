@@ -6,39 +6,84 @@ namespace Backend.Managers;
 
 public class UserManager
 {
-  private readonly DatabaseManager _manager;
-  public UserManager(DatabaseManager manager)
-  {
-    _manager = manager;
-  }
 
-  public async Task<User?> GetUser(string? username)
-  {
-    Dictionary<string, object>? fetch = await _manager.FetchOne(
-      "SELECT id, username, email, avatar_md5, password_hash, rank, unix register FROM users where username_safe = @usafe;", 
-      new Dictionary<string, object>
-      {
-        { "@usafe", username.ToLower().Replace(" ", "_").Trim() }
-      }
-    );
+    private DatabaseManager _dbManager;
 
-    if (fetch == null || fetch.Keys.Count == 0)
-      return null;
-
-    return new User
+    public UserManager(DatabaseManager dbManager)
     {
-      ID = fetch["id"] as long? ?? 0,
-      Username = fetch["username"] as string ?? "",
-      Email = fetch["email"] as string ?? "",
-      AvatarMD5 = fetch["avatar_md5"] as string ?? "",
-      PasswordHash = fetch["password_hash"] as string ?? "",
-      Rank = (UserType) (fetch["rank"] as long? ?? 0),
-      RegisterUnix = DateTimeOffset.FromUnixTimeSeconds(fetch["register"] as long? ?? 0)
-    };
-  }
+        _dbManager = dbManager;
+    }
 
-  public bool VerifyPassword(User user, string? password)
-  {
-    return BCrypt.Net.BCrypt.Verify(password.CalculateMD5Hash(), user.PasswordHash);
-  }
+    /// <summary>
+    /// Get all users matching the display name
+    /// </summary>
+    /// <param name="displayName">display name to search in</param>
+    /// <returns>list of users matching GetAllUsers</returns>
+    public async Task<IEnumerable<User>> GetAllUsersMatching(string displayName)
+    {
+        var users = await _dbManager.FetchAll("SELECT * FROM users WHERE display_name LIKE @login",
+            new Dictionary<string, object>() { ["login"] = $"%{displayName}%" });
+
+        return users.Select(s => FromSQLDict(s));
+    }
+
+    /// <summary>
+    /// Get All users
+    /// </summary>
+    /// <returns>All users</returns>
+    public async Task<IEnumerable<User>> GetAllUsers()
+    {
+        var users = await _dbManager.FetchAll("SELECT * FROM users");
+
+        return users.Select(s => FromSQLDict(s));
+    }
+
+    
+
+    /// <summary>
+    /// Get a user by it's login
+    /// </summary>
+    /// <param name="login">login name of the user</param>
+    /// <returns>the specific user</returns>
+    public async Task<User?> GetUserByLogin(string login, bool showPassword = false)
+    {
+        var user = await _dbManager.FetchOne("SELECT * FROM users WHERE login_name = @login", 
+            new Dictionary<string, object>() { ["login"] = login });
+
+        if (user == null)
+            return null;
+
+        return FromSQLDict(user);
+    }
+
+    /// <summary>
+    /// Get a user by it's ID
+    /// </summary>
+    /// <param name="id">id of the user</param>
+    /// <returns>the user</returns>
+    public async Task<User?> GetUserById(int id, bool showPassword = false)
+    {
+        var user = await _dbManager.FetchOne("SELECT * FROM users WHERE id = @user",
+            new Dictionary<string, object> { ["user"] = id });
+        if (user == null)
+            return null;
+
+        return FromSQLDict(user, showPassword);
+
+    }
+
+
+    private User FromSQLDict(Dictionary<string, object> user, bool showPassword = false)
+    {
+        return new User()
+        {
+            ID = (int)user["id"],
+            LoginName = (string)user["login_name"],
+            DisplayName = (string)user["display_name"],
+            PasswordHash = showPassword ? (string)user["pw_hash"] : "secret potato",
+            Rank = (UserRank)user["rank"]
+        };
+    }
+
+
 }

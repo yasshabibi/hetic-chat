@@ -43,6 +43,11 @@ public class DatabaseManager
   {
     return await FetchOne<object>(query, parameters);
   }
+  
+  public async Task<List<Dictionary<string, object>>> FetchAll(string query, IDictionary<string, object>? parameters = null)
+  {
+    return await FetchAll<object>(query, parameters);
+  }
 
   /// <summary>
   /// Open a connection, fetch one row, then close the connection. return a dictionnary of <typeparamref name="T"/> 
