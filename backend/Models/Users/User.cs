@@ -9,7 +9,4 @@ public class User
   public string UsernameSafe => Username.ToLower().Replace(" ", "_").Trim();
   public string Email { get; init; }
   public string PasswordHash { get; init; }
-  public UserType Rank { get; init; }
-  public string AvatarMD5 { get; init; }
-  public DateTimeOffset RegisterUnix { get; init; }
 }

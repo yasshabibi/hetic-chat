@@ -14,8 +14,9 @@ public class DatabaseManager
   public MySqlDataReader? Reader { get; set; }
   public MySqlTransaction? Transaction { get; set; }
 
-  public DatabaseManager(ServerConfiguration configuration)
+  public DatabaseManager()
   {
+    var configuration = new ServerConfiguration();
     Server = configuration.Server;
     Database = configuration.Database;
     Username = configuration.Username;
@@ -140,7 +141,83 @@ public class DatabaseManager
     await Connection.CloseAsync();
   }
 
-  public async Task OpenReader(string query, IDictionary<string, object>? parameters = null)
+  /// <summary>
+  /// Executes the query, and returns the first column of the first row in the result set returned by the query.
+  /// Additional columns or rows are ignored.
+  /// </summary>
+  /// <param name="query">The SQL query to execute.</param>
+  /// <param name="parameters">Parameters to sanitize your request.</param>
+  /// <returns>The value of the first column of the first row in the result set.</returns>
+  public async Task<object?> ExecuteScalar(string query, IDictionary<string, object>? parameters = null)
+  {
+      object? result = null;
+      await Connection.OpenAsync();
+      try
+      {
+          MySqlCommand command = new MySqlCommand(query, Connection);
+          if (parameters != null)
+          {
+              foreach (var param in parameters)
+              {
+                  command.Parameters.AddWithValue(param.Key, param.Value);
+              }
+          }
+          result = await command.ExecuteScalarAsync();
+      }
+      catch (Exception ex)
+      {
+          // Consider logging the exception or handling it as necessary
+          Console.WriteLine($"An error occurred: {ex.Message}");
+      }
+      finally
+      {
+          await Connection.CloseAsync();
+      }
+      return result;
+  }
+
+  /// <summary>
+  /// Executes an INSERT query and returns the ID of the inserted row.
+  /// </summary>
+  /// <param name="query">The SQL INSERT query to execute.</param>
+  /// <param name="parameters">Parameters to sanitize your request.</param>
+  /// <returns>The ID of the newly inserted row as an integer.</returns>
+  public async Task<int> ExecuteInsert(string query, IDictionary<string, object>? parameters = null)
+  {
+      int insertedId = 0;
+      await Connection.OpenAsync();
+      try
+      {
+          MySqlCommand command = new MySqlCommand(query, Connection);
+          if (parameters != null)
+          {
+              foreach (var param in parameters)
+              {
+                  command.Parameters.AddWithValue(param.Key, param.Value);
+              }
+          }
+
+          await command.ExecuteNonQueryAsync();
+          // Assuming auto_increment is enabled and you need to fetch last inserted ID
+          command = new MySqlCommand("SELECT LAST_INSERT_ID();", Connection);
+          object result = await command.ExecuteScalarAsync();
+          insertedId = Convert.ToInt32(result);
+      }
+      catch (Exception ex)
+      {
+          // Handle or log the exception as needed
+          Console.WriteLine($"An error occurred: {ex.Message}");
+      }
+      finally
+      {
+          await Connection.CloseAsync();
+      }
+      return insertedId;
+  }
+
+
+
+    public async Task OpenReader(string query, IDictionary<string, object>? parameters = null)
   {
     AssertReaderOpenned();
     await Connection.OpenAsync();
