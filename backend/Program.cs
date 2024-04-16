@@ -12,6 +12,7 @@ await db.Execute(sql);
 
 builder.Services.AddControllers();
 builder.Services.AddTransient(s => new DatabaseManager());
+builder.Services.AddSingleton(new SessionManager());
 builder.Services.AddTransient(s => new GroupManager(new DatabaseManager()));
 builder.Services.AddTransient(s => new UserManager(new DatabaseManager()));
 builder.Services.AddTransient(s => new MessageManager(new DatabaseManager()));
@@ -49,6 +50,7 @@ app.UseWebSockets(webSocketOptions);
 
 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Backend v1"));
 
+app.UseCors();
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();

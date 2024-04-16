@@ -40,7 +40,7 @@ public class UserManager
         {
             { "@username", user.Username },
             { "@email", user.Email },
-            { "@passwordHash", user.PasswordHash }
+            { "@password_hash", user.PasswordHash }
         };
 
         string query = @"

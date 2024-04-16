@@ -44,11 +44,6 @@ public class DatabaseManager
   {
     return await FetchOne<object>(query, parameters);
   }
-  
-  public async Task<List<Dictionary<string, object>>> FetchAll(string query, IDictionary<string, object>? parameters = null)
-  {
-    return await FetchAll<object>(query, parameters);
-  }
 
   /// <summary>
   /// Open a connection, fetch one row, then close the connection. return a dictionnary of <typeparamref name="T"/> 
@@ -140,9 +135,14 @@ public class DatabaseManager
   {
     await Connection.OpenAsync();
     MySqlCommand command = new MySqlCommand(query, Connection, Transaction);
-    if (parameters != null)
-      command.Parameters.AddRange(parameters.ToArray());
-    await command.ExecuteNonQueryAsync();
+        if (parameters != null)
+        {
+            foreach (var param in parameters)
+            {
+                command.Parameters.AddWithValue(param.Key, param.Value);
+            }
+        }
+        await command.ExecuteNonQueryAsync();
     await Connection.CloseAsync();
   }
 

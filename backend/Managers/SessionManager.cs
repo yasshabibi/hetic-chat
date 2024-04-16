@@ -60,21 +60,9 @@ public class SessionManager
     }
     
     session = Sessions[sessionId];
-
-    if (!Equals(context.Connection.RemoteIpAddress, session.IpAddress))
-    {
-      // The session IP has changed, the token may has been spoofed, disconnect the session and make a new one for the user
-      _sessions.Remove(sessionId);
-      
-      session = CreateSession(context);
-      context.Response.Cookies.Append("session", session.SessionId,
-      new CookieOptions { Expires = DateTime.UtcNow.AddDays(1) });
-      return session;
-    }
-    
     if (updateSessionTime)
       session.LastActivity = DateTime.Now;
-    
     return session;
+    
   }
 }

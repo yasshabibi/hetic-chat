@@ -19,7 +19,7 @@ public class GroupManager
             { "@createdBy", createdByUserId }
         };
 
-        string groupQuery = "INSERT INTO Groups (group_name, created_by) VALUES (@groupName, @createdBy); SELECT LAST_INSERT_ID();";
+        string groupQuery = "INSERT INTO `Groups` (group_name, created_by) VALUES (@groupName, @createdBy); SELECT LAST_INSERT_ID();";
         try
         {
             int groupId = await _manager.ExecuteInsert(groupQuery, parameters);
@@ -53,7 +53,7 @@ public class GroupManager
             { "@userId", userId }
         };
 
-        string checkQuery = "SELECT 1 FROM Groups WHERE group_id = @groupId AND created_by = @userId;";
+        string checkQuery = "SELECT 1 FROM `Groups` WHERE group_id = @groupId AND created_by = @userId;";
         if (await _manager.ExecuteScalar(checkQuery, parameters) != null)
         {
             string deleteQuery = "DELETE FROM Groups WHERE group_id = @groupId;";
@@ -65,7 +65,7 @@ public class GroupManager
 
     public async Task<bool> ModifyGroup(int groupId, string newName)
     {
-        string query = "UPDATE Groups SET group_name = @newName WHERE group_id = @groupId;";
+        string query = "UPDATE `Groups` SET group_name = @newName WHERE group_id = @groupId;";
         var parameters = new Dictionary<string, object>
         {
             { "@groupId", groupId },
