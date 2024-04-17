@@ -77,7 +77,7 @@
                 // Creating a session or updating an existing session
                 var session = _sessionManager.IdentifyUser(HttpContext, updateSessionTime: true);
                 session.User = user;  // Associating the user with the session
-                return Ok(new { SessionId = session.SessionId, Message = "Login successful" });
+                return Ok(new { SessionId = session.SessionId, Message = "Login successful", User = user.ID });
             }
 
             [HttpGet("{userId}")]
