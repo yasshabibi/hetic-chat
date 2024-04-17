@@ -5,6 +5,7 @@
     using Models.Users;
     using System.ComponentModel.DataAnnotations;
 
+
     namespace Backend.Controllers
     {
         [ApiController]
@@ -77,6 +78,22 @@
                 var session = _sessionManager.IdentifyUser(HttpContext, updateSessionTime: true);
                 session.User = user;  // Associating the user with the session
                 return Ok(new { SessionId = session.SessionId, Message = "Login successful" });
+            }
+
+            [HttpGet("{userId}")]
+            public async Task<IActionResult> GetUserById(int userId)
+            {
+                var user = await _userManager.GetUserById(userId);
+                if (user == null)
+                    return NotFound();
+                return Ok(user);
+            }
+
+            [HttpGet("all")]
+            public async Task<IActionResult> GetUsers()
+            {
+                var users = await _userManager.GetUsers().ToListAsync();
+                return Ok(users);
             }
         }
     }

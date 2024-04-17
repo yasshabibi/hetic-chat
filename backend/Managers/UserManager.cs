@@ -34,6 +34,42 @@ public class UserManager
         };
     }
 
+    public async Task<User?> GetUserById(int userId)
+    {
+        var query = "SELECT user_id, username, email FROM Users WHERE user_id = @userId;";
+        var parameters = new Dictionary<string, object> { { "@userId", userId } };
+
+        Dictionary<string, object>? fetch = await _manager.FetchOne(query, parameters);
+
+        if (fetch is { Keys.Count: > 0 })
+        {
+            return new User
+            {
+                ID = fetch["user_id"] as int? ?? 0,
+                Username = fetch["username"] as string ?? "",
+                Email = fetch["email"] as string ?? "",
+                PasswordHash = ""
+            };
+        }
+        return null;
+    }
+
+    public async IAsyncEnumerable<User> GetUsers()
+    {
+        var query = "SELECT user_id, username, email FROM Users;";
+        await _manager.OpenReader(query);
+        foreach (Dictionary<string, object> row in _manager.Reader!)
+        {
+            yield return new User
+            {
+                ID = row["user_id"] as int? ?? 0,
+                Username = row["username"] as string ?? "",
+                Email = row["email"] as string ?? "",
+                PasswordHash = ""
+            };
+        }
+    }
+
     public async Task<bool> StoreUser(User user)
     {
         var parameters = new Dictionary<string, object>

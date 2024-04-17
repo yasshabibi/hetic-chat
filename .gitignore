@@ -423,3 +423,6 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 **/*.v2
+/backend/obj/*
+/backend/obj/Debug/net7.0/ref/Backend.dll
+/backend/obj/Debug/net7.0/refint/Backend.dll

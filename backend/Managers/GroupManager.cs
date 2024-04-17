@@ -1,15 +1,62 @@
 ﻿using Backend.Models;
+using Backend.Models.Groups;
+using Backend.Models.Users;
 using Backend.Utils;
+using MySqlConnector;
 
 namespace Backend.Managers;
 
 public class GroupManager
 {
     private readonly DatabaseManager _manager;
-    public GroupManager(DatabaseManager manager)
+    private readonly UserManager _userManager;
+    public GroupManager(DatabaseManager manager, UserManager userManager)
     {
         _manager = manager;
+        _userManager = userManager;
     }
+
+    public async Task<List<Group>> GetGroupByUserId(int userId)
+    {
+        var query = @"
+        SELECT g.group_id, g.group_name, g.created_by, gm.user_id, u.username, gm.role
+        FROM Groups g
+        JOIN GroupMembers gm ON g.group_id = gm.group_id
+        JOIN Users u ON gm.user_id = u.user_id
+        WHERE gm.user_id = @userId;";
+
+        var parameters = new Dictionary<string, object> { { "@userId", userId } };
+        var fetch = await _manager.FetchAll<object>(query, parameters);
+
+        var groups = new List<Group>();
+        var groupDictionary = new Dictionary<int, Group>();
+
+        foreach (var row in fetch)
+        {
+            int groupId = Convert.ToInt32(row["group_id"]);
+            if (!groupDictionary.ContainsKey(groupId))
+            {
+                groupDictionary[groupId] = new Group
+                {
+                    GroupId = groupId,
+                    GroupName = row["group_name"] as string ?? "",
+                    CreatedBy = Convert.ToInt32(row["created_by"]),
+                    Members = new List<GroupMember>()
+                };
+            }
+
+            User u = (await _userManager.GetUserById(Convert.ToInt32(row["user_id"])))!;
+            
+            groupDictionary[groupId].Members.Add(new GroupMember
+            {
+                User = u,
+                Role = row["role"] as string ?? "member"  // Assuming default role is 'member'
+            });
+        }
+
+        return groupDictionary.Values.ToList();
+    }
+
 
     public async Task<bool> CreateGroup(string groupName, List<int> memberUserIds, int createdByUserId)
     {

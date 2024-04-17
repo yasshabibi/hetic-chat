@@ -13,7 +13,11 @@ await db.Execute(sql);
 builder.Services.AddControllers();
 builder.Services.AddTransient(s => new DatabaseManager());
 builder.Services.AddSingleton(new SessionManager());
-builder.Services.AddTransient(s => new GroupManager(new DatabaseManager()));
+builder.Services.AddTransient(s =>
+{
+    DatabaseManager db = new();
+    return new GroupManager(db, new UserManager(db));
+});
 builder.Services.AddTransient(s => new UserManager(new DatabaseManager()));
 builder.Services.AddTransient(s => new MessageManager(new DatabaseManager()));
 builder.Services.AddEndpointsApiExplorer();

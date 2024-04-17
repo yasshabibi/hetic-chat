@@ -40,6 +40,13 @@ namespace Backend.Controllers
                 return BadRequest("Unable to create group.");
         }
 
+        [HttpGet("user/{userId}")]
+        public async Task<IActionResult> GetGroupByUserId(int userId)
+        {
+            var groups = await _groupManager.GetGroupByUserId(userId);
+            return Ok(groups);
+        }
+
         [HttpDelete("delete/{groupId}")]
         public async Task<IActionResult> DeleteGroup(int groupId, int userId)
         {
