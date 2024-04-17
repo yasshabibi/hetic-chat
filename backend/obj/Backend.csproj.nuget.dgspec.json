@@ -1,25 +1,27 @@
 {
   "format": 1,
   "restore": {
-    "/home/panige/RiderProjects/hetic-chat/backend/Backend.csproj": {}
+    "C:\\Users\\beniz\\Documents\\Development\\School Projects\\hetic-chat\\backend\\Backend.csproj": {}
   },
   "projects": {
-    "/home/panige/RiderProjects/hetic-chat/backend/Backend.csproj": {
+    "C:\\Users\\beniz\\Documents\\Development\\School Projects\\hetic-chat\\backend\\Backend.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/panige/RiderProjects/hetic-chat/backend/Backend.csproj",
+        "projectUniqueName": "C:\\Users\\beniz\\Documents\\Development\\School Projects\\hetic-chat\\backend\\Backend.csproj",
         "projectName": "Backend",
-        "projectPath": "/home/panige/RiderProjects/hetic-chat/backend/Backend.csproj",
-        "packagesPath": "/home/panige/.nuget/packages/",
-        "outputPath": "/home/panige/RiderProjects/hetic-chat/backend/obj/",
+        "projectPath": "C:\\Users\\beniz\\Documents\\Development\\School Projects\\hetic-chat\\backend\\Backend.csproj",
+        "packagesPath": "C:\\Users\\beniz\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\beniz\\Documents\\Development\\School Projects\\hetic-chat\\backend\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/home/panige/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\beniz\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net7.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -32,6 +34,11 @@
           "warnAsError": [
             "NU1605"
           ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
         }
       },
       "frameworks": {
@@ -57,6 +64,10 @@
             "Swashbuckle.AspNetCore": {
               "target": "Package",
               "version": "[6.4.0, )"
+            },
+            "System.Linq.Async": {
+              "target": "Package",
+              "version": "[4.0.0, )"
             }
           },
           "imports": [
@@ -78,7 +89,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/home/panige/.dotnet/sdk/7.0.401/RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.204\\RuntimeIdentifierGraph.json"
         }
       }
     }

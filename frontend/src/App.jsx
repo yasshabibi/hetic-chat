@@ -3,6 +3,7 @@ import Navbar from '@/components/Navbar';
 import Home from '@/components/page/Home';
 import Login from '@/components/page/Login';
 import Register from '@/components/page/Register';
+import GroupCreation from '@/components/page/GroupCreation';
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/group-creation" element={<GroupCreation />} />
         </Routes>
       </div>
     </Router>

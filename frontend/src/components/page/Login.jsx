@@ -14,6 +14,7 @@ const Login = () => {
             const response = await loginUser(userName, password);
             
             sessionStorage.setItem('sessionID', response.sessionId);
+            sessionStorage.setItem('userId', response.user);
 
             alert(response.message);
 

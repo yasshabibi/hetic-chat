@@ -8,21 +8,18 @@ export const registerUser = async (userData) => {
     });
 
     if (!response.ok) {
-        const errorBody = await response.text(); // Utilise text() pour éviter les erreurs de parsing JSON.
+        const errorBody = await response.text();
         throw new Error(errorBody || 'Error occurred during registration');
     }
 
-    // Vérifie le type de contenu de la réponse avant d'essayer de parser en JSON
     const contentType = response.headers.get('content-type');
     if (contentType && contentType.includes('application/json')) {
         return await response.json();
     } else {
-        // Si ce n'est pas du JSON, tu peux retourner le texte brut ou une valeur par défaut.
         console.log('Received non-JSON response');
         return await response.text();
     }
 };
-
 
 export const loginUser = async (username, password) => {
     const response = await fetch('https://localhost:7266/User/login', {
@@ -36,6 +33,24 @@ export const loginUser = async (username, password) => {
     if (!response.ok) {
         const errorBody = await response.text();
         throw new Error(errorBody || 'Error occurred during login');
+    }
+
+    return await response.json();
+};
+
+
+export const getUserData = async (userId) => {
+    const response = await fetch('https://localhost:7266/user/' + userId, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId }),
+    });
+
+    if (!response.ok) {
+        const errorBody = await response.text();
+        throw new Error(errorBody || 'Error occurred while fetching user data');
     }
 
     return await response.json();
