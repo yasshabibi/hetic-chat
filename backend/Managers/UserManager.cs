@@ -57,8 +57,7 @@ public class UserManager
     public async IAsyncEnumerable<User> GetUsers()
     {
         var query = "SELECT user_id, username, email FROM Users;";
-        await _manager.OpenReader(query);
-        foreach (Dictionary<string, object> row in _manager.Reader!)
+        foreach (var row in await _manager.FetchAll<object>(query))
         {
             yield return new User
             {
